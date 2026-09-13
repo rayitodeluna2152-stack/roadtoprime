@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ROAD TO PRIME — Estado de tu cuenta</title>
 
-  <style>
+<script>
+if (location.search.includes("reset=1")) {
+    localStorage.clear();
+}
+</script>
+
+<style>
     body {
         background: linear-gradient(135deg, #ff7b00, #ff9a3c);
         font-family: Arial;
@@ -55,22 +61,12 @@
         margin-top: 20px;
         font-size: 15px;
     }
-  </style>
+</style>
 </head>
 
 <body>
 
-<!-- 🔥 SISTEMA DE ACCESO -->
-<script defer src="access.js"></script>
 <script>
-  accesoModuloNormal(); // ESTA ES LA CORRECTA
-</script>
-
-<script>
-  // ============================
-  // 🔥 ESTADO PREMIUM
-  // ============================
-
   const id = localStorage.getItem("usuarioID");
   const modoCreador = localStorage.getItem("modoCreador");
 
@@ -82,23 +78,17 @@
 
   function calcularDiasRestantes(fin) {
       const msRestantes = fin - Date.now();
-      return Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
+      return Math.floor(msRestantes / (1000 * 60 * 60 * 24)) + 1;
   }
 
   let mensaje = "";
   let dias = "";
 
-  // ============================
-  // 🔥 CREATOR MODE
-  // ============================
   if (modoCreador === "true") {
       mensaje = "Eres el creador 🔥";
       dias = "Acceso ilimitado sin caducidad.";
   }
 
-  // ============================
-  // 🔥 PREMIUM NORMAL
-  // ============================
   else if (premiumActivo === "true") {
       const diasRestantes = calcularDiasRestantes(Number(premiumFin));
 
@@ -111,9 +101,6 @@
       }
   }
 
-  // ============================
-  // 🔥 PRUEBA ACTIVA
-  // ============================
   else if (pruebaActiva === "true") {
       const diasRestantes = calcularDiasRestantes(Number(pruebaFin));
 
@@ -126,9 +113,6 @@
       }
   }
 
-  // ============================
-  // 🔥 SIN NADA
-  // ============================
   else {
       mensaje = "No tienes prueba ni PREMIUM.";
       dias = "Activa tu prueba o PREMIUM para continuar.";
