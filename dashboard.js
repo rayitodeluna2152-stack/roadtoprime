@@ -1,92 +1,157 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Road To Prime · Dashboard</title>
+// ===============================
+// 🔥 VARIABLES BASE
+// ===============================
+const id = localStorage.getItem("usuarioID");
+const modoCreador = localStorage.getItem("modoCreador");
 
-    <link rel="stylesheet" href="dashboard.css">
+// ===============================
+// 🔥 ELEMENTOS DEL DASHBOARD
+// ===============================
+const usernameEl = document.getElementById("dash-username");
+const subtitleEl = document.getElementById("dash-subtitle");
+const premiumBtn = document.getElementById("dash-premium-btn");
+const footerPremium = document.getElementById("dash-footer-premium");
 
-    <!-- 🔥 PRIMERO access.js (SIN defer) -->
-    <script src="access.js"></script>
+const progressFill = document.getElementById("dash-progress-fill");
+const primeLevelEl = document.getElementById("dash-prime-level");
+const primePercentEl = document.getElementById("dash-prime-percent");
 
-    <!-- 🔥 DESPUÉS dashboard.js -->
-    <script defer src="dashboard.js"></script>
-</head>
+const rachaEl = document.getElementById("dash-racha");
+const sesionesEl = document.getElementById("dash-sesiones");
 
-<body>
+const historyEl = document.getElementById("dash-history");
 
-<script>
-    // ============================
-    // 🔥 DASHBOARD = MÓDULO NORMAL
-    // Creador, Premium y Prueba entran
-    // ============================
-    accesoModuloNormal();
-</script>
+const statusButtons = document.querySelectorAll(".status-btn");
+const statusTextEl = document.getElementById("dash-status-text");
 
-<div class="dash-wrapper">
+// ===============================
+// 🔥 FUNCIÓN PARA LEER NÚMEROS SEGUROS
+// ===============================
+function getNum(key, def = 0) {
+    if (!id) return def;
+    const raw = localStorage.getItem(id + key);
+    const num = Number(raw);
+    return isNaN(num) ? def : num;
+}
 
-    <!-- HEADER -->
-    <header class="dash-header anim-fade">
-        <h1 id="dash-username" class="dash-title">Usuario · Road To Prime</h1>
-        <p id="dash-subtitle" class="dash-subtitle">Cargando estado...</p>
-    </header>
+// ===============================
+// 🔥 CARGAR NOMBRE
+// ===============================
+if (id && usernameEl) {
+    usernameEl.textContent = id + " · Road To Prime";
+}
 
-    <!-- PROGRESO PRIME -->
-    <section class="dash-section anim-up">
-        <h2 class="section-title">Progreso PRIME</h2>
+// ===============================
+// 🔥 PROGRESO PRIME
+// ===============================
+const nivelPrime = getNum("_nivelPrime", 1);
+const porcentajePrime = getNum("_porcentajePrime", 0);
 
-        <div class="prime-info">
-            <span id="dash-prime-level" class="prime-level">Nivel 1</span>
-            <span id="dash-prime-percent" class="prime-percent">0%</span>
-        </div>
+primeLevelEl.textContent = "Nivel " + nivelPrime;
+primePercentEl.textContent = porcentajePrime + "%";
 
-        <div class="prime-bar">
-            <div id="dash-progress-fill" class="prime-fill"></div>
-        </div>
-    </section>
+// ANIMACIÓN DE LA BARRA
+setTimeout(() => {
+    progressFill.style.width = porcentajePrime + "%";
+}, 300);
 
-    <!-- ESTADÍSTICAS -->
-    <section class="dash-stats anim-up">
-        <div class="stat-card glass glow">
-            <h3>Racha PRIME</h3>
-            <p id="dash-racha">0 días</p>
-        </div>
+// ===============================
+// 🔥 RACHA Y SESIONES
+// ===============================
+rachaEl.textContent = getNum("_rachaPrime", 0) + " días";
+sesionesEl.textContent = getNum("_sesionesHoy", 0) + " sesiones";
 
-        <div class="stat-card glass glow">
-            <h3>Sesiones hoy</h3>
-            <p id="dash-sesiones">0 sesiones</p>
-        </div>
-    </section>
+// ===============================
+// 🔥 HISTORIAL
+// ===============================
+let historial = [];
 
-    <!-- ESTADO ACTUAL -->
-    <section class="dash-section anim-up">
-        <h2 class="section-title">Estado actual</h2>
+try {
+    historial = JSON.parse(localStorage.getItem(id + "_historialModulos")) || [];
+} catch {
+    historial = [];
+}
 
-        <div class="status-buttons">
-            <button class="status-btn pulse-btn" data-status="Enfocado">Enfocado</button>
-            <button class="status-btn pulse-btn" data-status="Lectura">Lectura</button>
-            <button class="status-btn pulse-btn" data-status="Descanso">Descanso</button>
-        </div>
+historyEl.innerHTML = "";
 
-        <p id="dash-status-text" class="status-text">Sin estado</p>
-    </section>
+historial.slice(-5).reverse().forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = `
+      <div class="history-dot"></div>
+      <span>${item}</span>
+    `;
+    historyEl.appendChild(div);
+});
 
-    <!-- HISTORIAL -->
-    <section class="dash-section anim-up">
-        <h2 class="section-title">Historial reciente</h2>
-        <div id="dash-history" class="history-list glass"></div>
-    </section>
+// ===============================
+// 🔥 ESTADO ACTUAL
+// ===============================
+statusButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        statusButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
 
-    <!-- PREMIUM -->
-    <section class="dash-section anim-up">
-        <button id="dash-premium-btn" class="premium-btn pulse-btn">
-            Hazte PRIME
-        </button>
-        <p id="dash-footer-premium" class="premium-footer">Estado: FREE</p>
-    </section>
+        const estado = btn.dataset.status;
+        statusTextEl.textContent = estado;
 
-</div>
+        localStorage.setItem(id + "_estadoActual", estado);
+    });
+});
 
-</body>
-</html>
+const estadoGuardado = localStorage.getItem(id + "_estadoActual");
+if (estadoGuardado) {
+    statusTextEl.textContent = estadoGuardado;
+    statusButtons.forEach(btn => {
+        if (btn.dataset.status === estadoGuardado) {
+            btn.classList.add("active");
+        }
+    });
+}
+
+// ===============================
+// 🔥 SISTEMA PREMIUM / PRUEBA / CREADOR
+// ===============================
+const premiumActivo = localStorage.getItem(id + "_premiumActivo");
+const premiumFin = localStorage.getItem(id + "_premiumFin");
+
+const pruebaActiva = localStorage.getItem(id + "_pruebaActiva");
+const pruebaFin = localStorage.getItem(id + "_pruebaFin");
+
+function actualizarPremium() {
+    const now = Date.now();
+
+    // 🔥 MODO CREADOR
+    if (modoCreador === "true") {
+        subtitleEl.textContent = "Modo CREADOR · Todo desbloqueado.";
+        premiumBtn.textContent = "Creador 🔥";
+        premiumBtn.classList.add("secondary");
+        footerPremium.textContent = "Estado: CREADOR";
+        return;
+    }
+
+    // 🔥 PREMIUM MENSUAL
+    if (premiumActivo === "true" && premiumFin && now <= Number(premiumFin)) {
+        subtitleEl.textContent = "Modo PRIME activado · Disfruta tu poder.";
+        premiumBtn.textContent = "Eres PRIME 🔥";
+        premiumBtn.classList.add("secondary");
+        footerPremium.textContent = "Estado: PRIME";
+        return;
+    }
+
+    // 🔥 PRUEBA DE 7 DÍAS
+    if (pruebaActiva === "true" && pruebaFin && now <= Number(pruebaFin)) {
+        subtitleEl.textContent = "Prueba activa · 7 días de PRIME.";
+        premiumBtn.textContent = "Prueba activa";
+        premiumBtn.classList.add("secondary");
+        footerPremium.textContent = "Estado: PRUEBA";
+        return;
+    }
+
+    // 🔥 MODO FREE
+    subtitleEl.textContent = "Modo FREE · Activa PRIME para más poder.";
+    premiumBtn.textContent = "Hazte PRIME";
+    footerPremium.textContent = "Estado: FREE";
+}
+
+actualizarPremium();
