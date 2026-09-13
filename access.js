@@ -52,7 +52,6 @@ function esPruebaActiva(id) {
 // ===============================
 // 🔥 ACCESO A MÓDULOS NORMALES
 // ===============================
-// Dashboard, pomodoro, tareas, logros, premium.html, etc.
 function accesoModuloNormal() {
     const id = obtenerID();
 
@@ -81,7 +80,6 @@ function accesoModuloNormal() {
 // ===============================
 // 🔥 ACCESO A MÓDULOS EXCLUSIVOS
 // ===============================
-// Lectura PRIME, Rutina PRIME, 70 trucos
 function accesoModuloPremiumSolo() {
     const id = obtenerID();
 
