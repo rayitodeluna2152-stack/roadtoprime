@@ -3,12 +3,11 @@
 // ===============================
 const id = localStorage.getItem("usuarioID");
 
-// Protección extra
-if (!id) {
-    alert("Debes iniciar sesión.");
-    location.href = "login.html";
-    throw new Error("No hay usuario");
-}
+// ❗ IMPORTANTE:
+// Premium.html NO debe bloquear si no hay usuario.
+// Premium.html es una página pública.
+// Solo los módulos premium deben llamar checkPremiumAccess().
+
 
 // ===============================
 // 🔥 ACTIVAR PREMIUM (manual o desde backend)
@@ -29,9 +28,15 @@ function activarPremium() {
 }
 
 // ===============================
-// 🔥 COMPROBAR PREMIUM
+// 🔥 COMPROBAR PREMIUM (solo para módulos premium)
 // ===============================
 function checkPremiumAccess() {
+    if (!id) {
+        alert("Debes iniciar sesión.");
+        location.href = "login.html";
+        return false;
+    }
+
     const activo = localStorage.getItem(id + "_premiumActivo");
     const finRaw = localStorage.getItem(id + "_premiumFin");
 
@@ -55,6 +60,7 @@ function checkPremiumAccess() {
     if (Date.now() > fin) {
         alert("Tu suscripción ha terminado bro, renueva para seguir usando PRIME.");
         localStorage.removeItem(id + "_premiumActivo");
+        localStorage.removeItem(id + "_premiumFin");
         location.href = "pago.html";
         return false;
     }
