@@ -1,15 +1,23 @@
 const id = localStorage.getItem("usuarioID");
 
-// Si es creador → infinito
+// ===============================
+// 🔥 CREADOR → prueba infinita
+// ===============================
 if (localStorage.getItem("modoCreador") === "true") {
-    document.getElementById("diasRestantes").innerText = "∞";
+    const diasRest = document.getElementById("diasRestantes");
+    if (diasRest) diasRest.innerText = "∞";
     return;
 }
 
+// ===============================
+// 🔥 DATOS DE LA PRUEBA
+// ===============================
 const activa = localStorage.getItem(id + "_pruebaActiva");
 const finRaw = localStorage.getItem(id + "_pruebaFin");
 
-// PROTECCIÓN: si finRaw no existe o no es número → premium
+// ===============================
+// 🔥 PROTECCIÓN: prueba corrupta o inexistente
+// ===============================
 if (!activa || !finRaw || isNaN(Number(finRaw))) {
     location.href = "premium.html";
     return;
@@ -18,12 +26,22 @@ if (!activa || !finRaw || isNaN(Number(finRaw))) {
 const fin = Number(finRaw);
 const ahora = Date.now();
 
+// ===============================
+// 🔥 CÁLCULO DE DÍAS RESTANTES
+// ===============================
 const dias = Math.ceil((fin - ahora) / (1000 * 60 * 60 * 24));
 
-// Si terminó → premium
+// ===============================
+// 🔥 PRUEBA CADUCADA
+// ===============================
 if (dias <= 0) {
+    localStorage.removeItem(id + "_pruebaActiva");
     location.href = "premium.html";
     return;
 }
 
-document.getElementById("diasRestantes").innerText = dias;
+// ===============================
+// 🔥 MOSTRAR DÍAS RESTANTES
+// ===============================
+const diasRest = document.getElementById("diasRestantes");
+if (diasRest) diasRest.innerText = dias;
