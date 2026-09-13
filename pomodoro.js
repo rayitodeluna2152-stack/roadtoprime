@@ -1,9 +1,35 @@
 // ===============================
+// 🔥 POMODORO GLOBAL
+// ===============================
+function guardarPomodoroGlobal(startTime, duration) {
+  const endTime = startTime + duration;
+
+  localStorage.setItem("pomodoro_start", startTime);
+  localStorage.setItem("pomodoro_end", endTime);
+  localStorage.setItem("pomodoro_running", "true");
+}
+
+function obtenerPomodoroGlobal() {
+  const running = localStorage.getItem("pomodoro_running");
+  if (running !== "true") return null;
+
+  const endTime = parseInt(localStorage.getItem("pomodoro_end"));
+  const ahora = Date.now();
+  const restante = endTime - ahora;
+
+  if (restante <= 0) {
+    localStorage.removeItem("pomodoro_running");
+    return null;
+  }
+
+  return restante;
+}
+
+// ===============================
 // 🔥 ID DEL USUARIO ACTUAL
 // ===============================
 const id = localStorage.getItem("usuarioID");
 
-// Protección extra (aunque access.js ya controla esto)
 if (!id) {
   alert("Debes iniciar sesión.");
   location.href = "login.html";
@@ -17,7 +43,7 @@ let intervalo = null;
 let modoActual = "enfoque";
 
 // ===============================
-// 🔥 DATOS PERSONALES (cada usuario tiene los suyos)
+// 🔥 DATOS PERSONALES
 // ===============================
 let sesionesHoy = parseInt(localStorage.getItem(id + "_sesionesHoy")) || 0;
 let racha = parseInt(localStorage.getItem(id + "_racha")) || 0;
@@ -129,6 +155,14 @@ document.getElementById("modoDescansoLargo").onclick = () => setModo("largo", 15
 // ===============================
 function iniciarPomodoro() {
   if (intervalo) return;
+
+  // 🔥 Guardar Pomodoro GLOBAL SOLO si NO viene de recuperación
+  if (!obtenerPomodoroGlobal()) {
+    const startTime = Date.now();
+    const duration = tiempo * 1000;
+    guardarPomodoroGlobal(startTime, duration);
+  }
+
   intervalo = setInterval(() => {
     tiempo--;
     actualizarTimer();
@@ -197,7 +231,16 @@ function agregarAlHistorial() {
 }
 
 // ===============================
-// 🔥 INICIALIZAR
+// 🔥 INICIALIZAR + RECUPERAR GLOBAL
 // ===============================
 setModo("enfoque", 25);
 actualizarPanelIzquierdo();
+
+window.addEventListener("load", () => {
+  const restante = obtenerPomodoroGlobal();
+  if (restante) {
+    tiempo = Math.floor(restante / 1000);
+    actualizarTimer();
+    iniciarPomodoro(); // ✔ ahora NO guarda un nuevo pomodoro global
+  }
+});
