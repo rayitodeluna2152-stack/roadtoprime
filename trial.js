@@ -1,3 +1,6 @@
+// ===============================
+// 🔥 ID DEL USUARIO
+// ===============================
 const id = localStorage.getItem("usuarioID");
 
 // ===============================
@@ -27,9 +30,10 @@ const fin = Number(finRaw);
 const ahora = Date.now();
 
 // ===============================
-// 🔥 CÁLCULO DE DÍAS RESTANTES
+// 🔥 CÁLCULO PERFECTO DE DÍAS RESTANTES
 // ===============================
-const dias = Math.ceil((fin - ahora) / (1000 * 60 * 60 * 24));
+// Evita el bug de "0 días"
+const dias = Math.floor((fin - ahora) / (1000 * 60 * 60 * 24)) + 1;
 
 // ===============================
 // 🔥 PRUEBA CADUCADA
