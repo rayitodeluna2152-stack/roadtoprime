@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>index.html</title>
-
+<script>
+const id = localStorage.getItem("usuarioID");
+if (!id) location.href = "login.html";
+</script>
     <style>
       body {
         overflow-x: hidden;
