@@ -71,19 +71,21 @@
     <button onclick="location.href='pago.html'">Hazte PREMIUM</button>
 </div>
 
+<!-- 🔥 SISTEMA DE CÁLCULO DE PRUEBA -->
 <script>
     const id = localStorage.getItem("usuarioID");
 
-    // CREATOR MODE → infinito
+    // 🔥 MODO CREADOR → infinito
     if (localStorage.getItem("modoCreador") === "true") {
         document.getElementById("diasRestantes").innerText = "∞";
         return;
     }
 
+    // 🔥 DATOS DE LA PRUEBA
     const activa = localStorage.getItem(id + "_pruebaActiva");
     const finRaw = localStorage.getItem(id + "_pruebaFin");
 
-    // Si no hay prueba → redirigir
+    // 🔥 SI NO EXISTE LA PRUEBA → REDIRIGIR
     if (!activa || !finRaw || isNaN(Number(finRaw))) {
         location.href = "premium.html";
         return;
@@ -92,14 +94,17 @@
     const fin = Number(finRaw);
     const ahora = Date.now();
 
+    // 🔥 CÁLCULO DE DÍAS
     const dias = Math.ceil((fin - ahora) / (1000 * 60 * 60 * 24));
 
-    // Si terminó → redirigir
+    // 🔥 SI LA PRUEBA TERMINÓ → REDIRIGIR
     if (dias <= 0) {
+        localStorage.removeItem(id + "_pruebaActiva");
         location.href = "premium.html";
         return;
     }
 
+    // 🔥 MOSTRAR DÍAS RESTANTES
     document.getElementById("diasRestantes").innerText = dias;
 </script>
 
