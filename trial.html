@@ -94,8 +94,8 @@
     const fin = Number(finRaw);
     const ahora = Date.now();
 
-    // 🔥 CÁLCULO DE DÍAS
-    const dias = Math.ceil((fin - ahora) / (1000 * 60 * 60 * 24));
+    // 🔥 CÁLCULO PERFECTO DE DÍAS (sin 0 días)
+    const dias = Math.floor((fin - ahora) / (1000 * 60 * 60 * 24)) + 1;
 
     // 🔥 SI LA PRUEBA TERMINÓ → REDIRIGIR
     if (dias <= 0) {
