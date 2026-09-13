@@ -1,5 +1,5 @@
 // ===============================
-// 🔥 SISTEMA DE ACCESO UNIFICADO (VERSIÓN FINAL)
+// 🔥 SISTEMA DE ACCESO UNIFICADO (VERSIÓN PERFECTA)
 // ===============================
 
 // Generar ID si no existe
@@ -25,8 +25,9 @@ function esPremiumMensual(id) {
     const fin = Number(localStorage.getItem(id + "_premiumFin"));
 
     if (activo === "true") {
-        if (Date.now() > fin) {
+        if (Date.now() > fin || isNaN(fin)) {
             localStorage.removeItem(id + "_premiumActivo");
+            localStorage.removeItem(id + "_premiumFin");
             return false;
         }
         return true;
@@ -55,7 +56,7 @@ function esPruebaActiva(id) {
 function accesoModuloNormal() {
     const id = obtenerID();
 
-    // ❗ Protección contra pruebas corruptas
+    // ❗ Limpieza automática de pruebas corruptas
     const pruebaActiva = localStorage.getItem(id + "_pruebaActiva");
     const pruebaFin = localStorage.getItem(id + "_pruebaFin");
 
@@ -70,7 +71,7 @@ function accesoModuloNormal() {
         esPremiumMensual(id) ||
         esPruebaActiva(id)
     ) {
-        return;
+        return; // acceso permitido
     }
 
     // Si no tiene nada → premium.html
@@ -84,7 +85,7 @@ function accesoModuloPremiumSolo() {
     const id = obtenerID();
 
     if (esCreador() || esPremiumMensual(id)) {
-        return;
+        return; // acceso permitido
     }
 
     if (esPruebaActiva(id)) {
