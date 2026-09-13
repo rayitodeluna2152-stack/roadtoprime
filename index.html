@@ -186,23 +186,7 @@ const id = localStorage.getItem("usuarioID");
 if (localStorage.getItem("modoCreador") === "true") {
     console.log("Acceso permitido: eres el creador 🔥");
 } else {
-
-    const trialDispositivo = localStorage.getItem("trialUsada");
-    const trialUsuario = localStorage.getItem(id + "_pruebaUsada");
-
-    const premiumActivo = localStorage.getItem(id + "_premiumActivo");
-    const premiumFin = localStorage.getItem(id + "_premiumFin");
-
-    if (premiumActivo === "true") {
-        if (Date.now() > premiumFin) {
-            localStorage.removeItem(id + "_premiumActivo");
-            location.href = "premium.html";
-        }
-    } else {
-        if (trialDispositivo === "true" || trialUsuario === "true") {
-            location.href = "premium.html";
-        }
-    }
+   
 }
 </script>
 
